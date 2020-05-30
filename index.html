@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calculadora</title>
+  <meta charset="utf-8">
+  <link href="formato.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript">
+
+    let acumulador = 0;
+    let operador = "";
+
+    const vaciar = () => {
+      document.getElementById("pantalla").value = "";
+    }
+
+    const rellenar = (y) => {
+      document.getElementById("pantalla").value = y;
+    }
+
+    const numero =() => {
+      return Number(document.getElementById("pantalla").value);
+    }
+
+    const numeros =() => {
+      const t = document.getElementById("pantalla").value;
+      return t.split(",");
+    }
+
+    const comparar =(a,b) => {
+      return a - b;
+    }
+
+    //OPERACIONES UNITARIAS
+
+    const cuadrado = () => {
+      if (validar()===false) return;
+      const  n = numero();
+      rellenar(n*n);
+      rellenar_info();
+    }
+
+    const mod = () => {
+      if (validar()===false) return;
+      const n = numero();
+      rellenar(Math.abs(n));
+      rellenar_info();
+    }
+
+    const fact = () => {
+      if (validar()===false) return;
+      let res = 1;
+      for (let i=numero(); i>1;i--){
+        res *=i;
+      }
+      rellenar(res);
+      rellenar_info();
+    }
+
+    // OPERADORES BINARIOS
+
+    const add = () => {
+      if (validar()===false) return;
+      acumula("+");
+      vaciar();
+      rellenar_info();
+    }
+
+    const res = () => {
+      if (validar()===false) return;
+      acumula("-");
+      vaciar();
+      rellenar_info();
+    }
+
+    const mul = () => {
+      if (validar()===false) return;
+      acumula("*");
+      vaciar();
+      rellenar_info();
+    }
+
+    const div = () => {
+      if (validar()===false) return;
+      acumula("/");
+      vaciar();
+      rellenar_info();
+    }
+
+    const eq = () => {
+      if (validar()===false) return;
+      acumula("");
+      rellenar(acumulador);
+      rellenar_info();
+    }
+
+    const acumula = (newop) => {
+        const n = numero();
+        switch (operador) {
+          case "+":
+            acumulador += n;
+            break;
+          case "-":
+            acumulador -= n;
+            break;
+          case "*":
+            acumulador *= n;
+            break;
+          case "/":
+            acumulador /= n;
+            break;
+          default:
+            acumulador = n;
+        }
+        operador = newop;
+    }
+
+    const rellenar_info = () => {  //function rellenar_info() {
+      let input = document.getElementById("pantalla");
+      let n = Number(input.value);
+      let info = document.getElementById("info");
+      if (Number.isNaN(n)){
+        info.innerHTML = "No es un número";
+      } else if  (n <100){
+        info.innerHTML = "Info: El resultado es menor que 100";
+      } else if (n<=200){
+        info.innerHTML = "Info: El resultado está entre 100 y 200";
+      } else {
+        info.innerHTML = "Info: El resultado es superior a 200";
+      }
+    }
+
+     //OPERACIONES EN FORMATO CSV (COMMA SEPARATED VALUES)
+
+    const sumatorio = () => {
+      if (validar()===false) return;
+      let res = 0;
+      for(let i=0; i<numeros().length; i++){
+        res+=Number(numeros()[i]);
+      }
+      rellenar(res);
+      rellenar_info();
+    }
+
+    const ordenar = () => {
+      if(validar()===false) return;
+      rellenar(numeros().sort(comparar));
+    }
+
+    const revertir = () => {
+      if(validar()===false) return;
+      rellenar(numeros().reverse());
+    }
+
+    const quitar = () => {
+      if(validar()===false) return;
+      let res="";
+      for(let i=0; i<numeros().length -1; i++){
+        if (i == numeros().length-2){
+          res += numeros()[i];
+        }
+        else
+          res+=(numeros()[i]) + ",";
+      }
+      rellenar(res);
+    }
+
+    //TRATAMIENTO DE ERRORES
+
+    const validar = () => {
+      let t = document.getElementById("pantalla").value;
+      const st = t.split(",");
+      let error = "Error";
+      let res = 0;
+      for (let i=0 ; i<st.length; i++) {
+          res = Number(st[i]) + res;
+      }
+      if (Number.isNaN(res)) {
+          rellenar(error);
+          return false;
+      }
+    }
+
+  </script>
+</head>
+
+<body>
+<h1>Práctica 1: Javier López Iniesta</h1>
+    <div class="container">
+    <div class="Numero">
+      Número:
+      <input class="texto" type="text" id="pantalla" onclick="vaciar()">
+    </div>
+    <div class="unitarias">
+      <button id="cuadrado" onclick="cuadrado()"> x<sup>2 </sup></button>
+      <button id="modulo" onclick="mod()"> abs(x) </button>
+      <button id="factorial" onclick="fact()"> n! </button>
+    </div>
+    <div class="binarias">
+      <button id="suma" onclick="add()"> + </button>
+      <button id="multiplicacion" onclick="mul()"> * </button>
+      <button id="igual" onclick="eq()"> = </button>
+      <button id="resta" onclick="res()"> - </button>
+      <button id="division" onclick="div()">/</button>
+    </div>
+    <div class="csv">
+      <button id="sumatorio" onclick="sumatorio()"> Sumatorio </button>
+      <button id="ordenar" onclick="ordenar()"> Ordenar </button>
+      <button id="revertir" onclick="revertir()"> Revertir </button>
+      <button id="quitar" onclick="quitar()"> Quitar último </button>
+    </div>
+    </div class="container">
+  <h2 id="info" class="grande" title="Info sobre el número">Info sobre el número</h2>
+ </body>
+</html>
